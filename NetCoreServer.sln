@@ -91,6 +91,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WssMulticastClient", "perfo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WssMulticastServer", "performance\WssMulticastServer\WssMulticastServer.csproj", "{20E95322-2F84-4147-8014-E50312D86CE5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "A2SServer", "examples\A2SServer\A2SServer.csproj", "{78B64FD0-BB5F-482D-AF76-679796FCA7B2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -435,6 +437,14 @@ Global
 		{20E95322-2F84-4147-8014-E50312D86CE5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{20E95322-2F84-4147-8014-E50312D86CE5}.Release|x64.ActiveCfg = Release|Any CPU
 		{20E95322-2F84-4147-8014-E50312D86CE5}.Release|x64.Build.0 = Release|Any CPU
+		{78B64FD0-BB5F-482D-AF76-679796FCA7B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78B64FD0-BB5F-482D-AF76-679796FCA7B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78B64FD0-BB5F-482D-AF76-679796FCA7B2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{78B64FD0-BB5F-482D-AF76-679796FCA7B2}.Debug|x64.Build.0 = Debug|Any CPU
+		{78B64FD0-BB5F-482D-AF76-679796FCA7B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78B64FD0-BB5F-482D-AF76-679796FCA7B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78B64FD0-BB5F-482D-AF76-679796FCA7B2}.Release|x64.ActiveCfg = Release|Any CPU
+		{78B64FD0-BB5F-482D-AF76-679796FCA7B2}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -480,6 +490,7 @@ Global
 		{135A82CB-25DE-4EC6-BC0B-2C0F33BEFBEB} = {8965E5CD-E36E-4DC5-A36E-827AFFC642D1}
 		{CA965D6F-FC0C-4D6F-B259-A6072E32DDD1} = {8965E5CD-E36E-4DC5-A36E-827AFFC642D1}
 		{20E95322-2F84-4147-8014-E50312D86CE5} = {8965E5CD-E36E-4DC5-A36E-827AFFC642D1}
+		{78B64FD0-BB5F-482D-AF76-679796FCA7B2} = {81ED94B5-0C65-432C-AEF5-67C3DFF7F2EE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {64415837-63D9-474E-A25C-EE91C9CA90C5}

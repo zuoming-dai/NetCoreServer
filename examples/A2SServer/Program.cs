@@ -4,11 +4,14 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using NetCoreServer;
+using Serilog;
+using Serilog.Core;
 
 namespace A2SServer
 {
     internal class A2SServer : UdpServer
     {
+        private Logger log;
         private const byte A2SInfoRequest = 0x54;
         private const byte A2SInfoResponse = 0x49;
         private const byte A2SPlayerRequest = 0x55;
@@ -18,8 +21,9 @@ namespace A2SServer
         private const byte A2SChallengeRequest = 0x57;
         private const byte A2SChallengeResponse = 0x41;
 
-        public A2SServer(IPAddress address, int port) : base(address, port)
+        public A2SServer(Logger log, IPAddress address, int port) : base(address, port)
         {
+            this.log = log;
         }
 
         protected override void OnStarted()
@@ -28,9 +32,9 @@ namespace A2SServer
             ReceiveAsync();
         }
 
-        private static byte[] Info()
+        private byte[] Info()
         {
-            Console.WriteLine("Returning A2S_INFO");
+            log.Information("Returning A2S_INFO");
             using var stream = new MemoryStream();
             using var binWriter = new BinaryWriter(stream);
             // package header
@@ -87,9 +91,9 @@ namespace A2SServer
             return stream.ToArray();
         }
 
-        private static byte[] Player()
+        private  byte[] Player()
         {
-            Console.WriteLine("Returning A2S_PLAYER");
+            log.Information("Returning A2S_PLAYER");
             using var stream = new MemoryStream();
             using var binWriter = new BinaryWriter(stream);
             // package header
@@ -123,9 +127,9 @@ namespace A2SServer
             return stream.ToArray();
         }
 
-        private static byte[] Rule()
+        private byte[] Rule()
         {
-            Console.WriteLine("Returning A2S_RULE");
+            log.Information("Returning A2S_RULE");
             using var stream = new MemoryStream();
             using var binWriter = new BinaryWriter(stream);
             // package header
@@ -153,9 +157,9 @@ namespace A2SServer
             return stream.ToArray();
         }
 
-        private static byte[] Challenge()
+        private byte[] Challenge()
         {
-            Console.WriteLine("Returning A2S_SERVERQUERY_GETCHALLENGE");
+            log.Information("Returning A2S_SERVERQUERY_GETCHALLENGE");
             using var stream = new MemoryStream();
             using var binWriter = new BinaryWriter(stream);
 
@@ -201,7 +205,7 @@ namespace A2SServer
 
         protected override void OnError(SocketError error)
         {
-            Console.WriteLine($"A2S UDP server caught an error with code {error}");
+            log.Error($"A2S UDP server caught an error with code {error}");
         }
     }
 
@@ -215,6 +219,10 @@ namespace A2SServer
             int port = 3333; // default static port
             const int testLinuxQueryPortOffset = 3;
             const string serverHostPortArgPrefix = "-server_host_port=";
+
+            var logPath = "/a2s_server.log";
+            const string logArgPrefix = "-log=";
+            
             if (args != null && args.Length > 0)
             {
                 foreach (string arg in args)
@@ -224,21 +232,36 @@ namespace A2SServer
                         int gamePort = Int32.Parse(arg.Substring(serverHostPortArgPrefix.Length));
                         port = gamePort + testLinuxQueryPortOffset;
                     }
+                    
+                    if (arg.StartsWith(logArgPrefix))
+                    {
+                        string logPathFromInput = arg.Substring(logArgPrefix.Length);
+                        if (logPath.EndsWith('/'))
+                        {
+                            logPathFromInput = logPathFromInput.Substring(0, logPathFromInput.Length - 1);
+                        }
+                        logPath = logPathFromInput + logPath;
+                    }
                 }
             }
-            Console.WriteLine($"UDP server port: {port}");
+            Logger log = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .WriteTo.File(logPath, rollingInterval: RollingInterval.Hour)
+                .CreateLogger();
+            log.Debug($"Log path is {logPath}");
 
-            Console.WriteLine();
+            log.Debug($"UDP server port: {port}");
 
             // Create a new UDP a2s server
-            var server = new A2SServer(IPAddress.Any, port);
+            var server = new A2SServer(log, IPAddress.Any, port);
 
             // Start the server
-            Console.Write("Server starting...");
+            log.Debug("Server starting...");
             server.Start();
-            Console.WriteLine("Done!");
+            log.Debug("Done!");
 
-            Console.WriteLine("Press Enter to stop the server or '!' to restart the server...");
+            log.Debug("Press Enter to stop the server or '!' to restart the server...");
 
             // Perform text input
             for (;;)
@@ -250,16 +273,16 @@ namespace A2SServer
                 // Restart the server
                 if (line == "!")
                 {
-                    Console.Write("Server restarting...");
+                    log.Debug("Server restarting...");
                     server.Restart();
-                    Console.WriteLine("Done!");
+                    log.Debug("Done!");
                 }
             }
 
             // Stop the server
-            Console.Write("Server stopping...");
+            log.Debug("Server stopping...");
             server.Stop();
-            Console.WriteLine("Done!");
+            log.Debug("Done!");
         }
     }
 }

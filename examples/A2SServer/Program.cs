@@ -205,12 +205,27 @@ namespace A2SServer
         }
     }
 
-    internal class Program
+    class Program
     {
-        private static void Main(string[] args)
+        // Sample args:
+        // /usr/local/games/TestLinux/builda/A2SServer -config=23097/serverconfig.json -log=23097/logs -server_host_port=55101
+        static void Main(string[] args)
         {
             // UDP server port
-            var port = 3333;
+            int port = 3333; // default static port
+            const int testLinuxQueryPortOffset = 3;
+            const string serverHostPortArgPrefix = "-server_host_port=";
+            if (args != null && args.Length > 0)
+            {
+                foreach (string arg in args)
+                {
+                    if (arg.StartsWith(serverHostPortArgPrefix))
+                    {
+                        int gamePort = Int32.Parse(arg.Substring(serverHostPortArgPrefix.Length));
+                        port = gamePort + testLinuxQueryPortOffset;
+                    }
+                }
+            }
             Console.WriteLine($"UDP server port: {port}");
 
             Console.WriteLine();
